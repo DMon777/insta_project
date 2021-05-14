@@ -42,7 +42,4 @@ class Logger{
 
 }
 
-const logger = new Logger();
-logger.add('new data');
-logger.add('error');
-logger.writeToFile();
+module.exports = Logger;

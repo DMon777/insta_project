@@ -35,27 +35,27 @@ class DB{
                 }
             });
         });
-
-
     }
-    // insertData( tableName, data ){
-    //     for( let item of data){
-    //         this.pool.getConnection( (err, connection ) => {
-    //             if(err) {
-    //                 console.log('connection error');
-    //             }
-    //             connection.query(`INSERT INTO ${tableName} SET ?`,{login : item, friend : 0},(err, rows) => {
-    //                 if(err){
-    //                     //console.log(err)
-    //                     connection.destroy();
-    //                 } else{
-    //                     connection.release();
-    //                     connection.destroy();
-    //                 }
-    //             });
-    //         });
-    //     }
-    // }
+
+    insertData( data, tableName = "subscribers" ){
+        for( let item of data){
+            this.pool.getConnection( (err, connection ) => {
+                if(err) {
+                    console.log('connection error');
+                }
+                connection.query(`INSERT INTO ${tableName} SET ?`,{url : item, is_friend : 0,was_deleted: 0,
+                expire_date: 0},(err, rows) => {
+                    if(err){
+                        console.log(err)
+                        connection.destroy();
+                    } else{
+                        connection.release();
+                        connection.destroy();
+                    }
+                });
+            });
+        }
+    }
 
     updateData( tableName, data, condition = '' ){
 

@@ -13,15 +13,19 @@ const {randomInteger} = require('./insta_modules/helpers');
 /* main function  */
 (async  function () {
     const login = 'kevinduglas83@yandex.ru';
-    const password = '12345xyz';
+    const password = 'dimabest777';
 
     const start= new Date().getTime();
     const browser = await puppeteer.launch({headless:true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
-    await cookieLogin(browser);
 
-    await action(browser);
+
+    //await loginInstagram(browser, login, password );
+
+     await cookieLogin(browser);
+    //
+     await action(browser);
     const end = new Date().getTime();
     console.log(`Время выполнения скрипта: ${((end - start) / 1000) } sec`);
     await browser.close();
@@ -29,9 +33,9 @@ const {randomInteger} = require('./insta_modules/helpers');
 })();
 
 async function action( browser ) {
-   // const randomActionsCount = randomInteger(23,29);
-    //let actionsCount = randomActionsCount;
-    let actionsCount = 3;
+    const randomActionsCount = randomInteger(23,29);
+    let actionsCount = randomActionsCount;
+    //let actionsCount = 10;
     actionsCount = await unsubscribe(browser,actionsCount);
     if(actionsCount > 0){
         await subscribe(browser,actionsCount);

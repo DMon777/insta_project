@@ -12,7 +12,14 @@ async function getUserSubscribers( browser, url ) {
     }))[0];
 
     const countSubscribers = await countSubscribersHandle
-        .evaluate(elem => Number(elem.textContent));
+        .evaluate(elem => {
+            let textContent = elem.textContent;
+            textContent = textContent.replace(/(\s|,)/g, '');
+            return Number(textContent);
+        });
+
+    console.log(countSubscribers);
+    console.log(typeof countSubscribers);
 
     const subscribesButtonSelectorXpath = '/html/body/div[1]/section/main/div/header/section/ul/li[2]/a';
 
@@ -42,7 +49,7 @@ async function getUserSubscribers( browser, url ) {
     let userLinks;
     let linksLength = 0;
     do{
-        await page.mouse.wheel({deltaY: 50}).catch(e => {
+        await page.mouse.wheel({deltaY: 300}).catch(e => {
             console.log('колесо не крутится((');
         });
         /* /html/body/div[5]/div/div/div[2]/ul/div/li/div/div[1]/div[2]/div[1]/span/a */
@@ -55,10 +62,12 @@ async function getUserSubscribers( browser, url ) {
             allLinks => allLinks.map(link => {
                 return "https://instagram.com" + link.getAttribute('href')
             }));
+        await page.waitForTimeout(3000);
         if (userLinks) {
             linksLength = userLinks.length > linksLength ? userLinks.length : linksLength;
         }
-
+        console.log(linksLength);
+        if(linksLength > 450) break;
     }
     while (linksLength < countSubscribers);
     return userLinks;
