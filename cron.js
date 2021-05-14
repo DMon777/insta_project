@@ -1,14 +1,8 @@
 const fs = require('fs');
 const dir = `${__dirname}/datatest`;
-const data = new Date( );
 const now = new Date().getTime();
+const today = new Date(now);
+const data = "hello \n ";
 
 
-if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir);
-}
-
-
-const fileName = `${dir}/${now}.txt`;
-
-fs.writeFileSync(fileName, data);
+fs.appendFileSync(`${dir}/test.txt`, `${data}`);

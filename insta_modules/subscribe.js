@@ -1,6 +1,8 @@
 const DB = require('../DB');
 const {randomInteger} = require('./helpers');
-const sendMailToApi = require('../mailapi');
+//const sendMailToApi = require('../mailapi');
+const sendMail = require('../sendMail');
+const Logger  =  require('../logger');
 
 async function subscribe( browser, actionsCount ) {
     const db_instance = new DB();
@@ -10,7 +12,7 @@ async function subscribe( browser, actionsCount ) {
     if(links.length > 0){
 
         const now = new Date().getTime();
-        const oneDay  = 1 * 24 * 3600 * 1000;
+        const oneDay  = 2 * 24 * 3600 * 1000;
         const expireDate = now + oneDay;
 
         for (let obj of links){
@@ -44,6 +46,14 @@ async function subscribe( browser, actionsCount ) {
 
             if(!subscribeButton){
                 await page.close();
+                /* если кнопки нет то это не существующий акаунт,так как похуй закрыты он
+                 или открытый, кнопка по любому быть должна. Нужно ему поставить
+                * was_deleted  = 1 чтобы больше не возвращатся к нему.  */
+                await db_instance.updateData('subscribers',{was_deleted:1},` WHERE id=${obj.id}`);
+                const logger = new Logger();
+                logger.add('акаунта не существует!!!')
+                logger.add(`адрес пользователя - ${obj.url}`);
+                logger.writeToFile
                 continue;
             }
 
@@ -55,9 +65,10 @@ async function subscribe( browser, actionsCount ) {
 
                 actionsCount--;
             } catch (e) {
-                console.log(e.stack);
-                console.log(`аккаунт пользователя - ${obj.url}`)
-                console.log("----------------------------------------");
+                const logger = new Logger();
+                logger.add(e.stack)
+                logger.add(`аккаунт пользователя  - ${obj.url}`);
+                logger.writeToFile();
             }
 
             await page.close();
@@ -65,8 +76,16 @@ async function subscribe( browser, actionsCount ) {
 
     }else{
         // подписчики законились нужно новых парсить.
-        console.log('no users selected');
-        sendMailToApi('больше не на кого подписываться, нужно новых импортировать!!!');
+       // sendMailToApi('больше не на кого подписываться, нужно новых импортировать!!!');
+       //  sendMail('больше не на кого подписываться, нужно новых импортировать!!!').catch( e => {
+       //      const logger = new Logger();
+       //      logger.add(e.stack);
+       //      logger.writeToFile();
+       //  });
+        const logger = new Logger();
+        logger.add('больше не на кого подписываться, нужно новых импортировать!!!');
+        logger.writeToFile();
+
     }
     return actionsCount;
 }
