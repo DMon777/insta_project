@@ -12,8 +12,8 @@ const {randomInteger} = require('./insta_modules/helpers');
 
 /* main function  */
 (async  function () {
-    const login = 'kevinduglas83@yandex.ru';
-    const password = '12345xyz';
+    const login = '*******';
+    const password = '*******';
 
     const start= new Date().getTime();
     const browser = await puppeteer.launch({headless:true,
